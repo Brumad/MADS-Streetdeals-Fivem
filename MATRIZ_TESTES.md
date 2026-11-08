@@ -2,7 +2,7 @@
 
 Estados: NAO_INICIADO, IMPLEMENTADO_NAO_TESTADO, TESTE_LOCAL_APROVADO, INTEGRACAO_VERIFICADA, HOMOLOGADO, BLOQUEADO, REPROVADO.
 Ambiente das evidencias: Lua 5.4 (lupa.lua54) em container Linux, 2026-11-08. **Teste local != Qbox real != in-game.**
-Comando: `python3 tools/run_lua_tests.py` (50 testes, 0 falhas no ultimo run). Mutacoes de sanidade: 6/6 detectadas.
+Comando: `python3 tools/run_lua_tests.py` (72 testes, 0 falhas no ultimo run). Mutacoes de sanidade: 6/6 (core) e 4/4 (ledger) detectadas.
 
 | Req | Descricao | Implementacao | Teste | Estado |
 |---|---|---|---|---|
@@ -14,3 +14,5 @@ Comando: `python3 tools/run_lua_tests.py` (50 testes, 0 falhas no ultimo run). M
 | R04.6 / A15 | confronto fisico | probabilidade de briga em core | test_negotiation | PARCIAL: combate real NAO_INICIADO |
 | R08.3 (reroll/cooldown) | anti-repeticao, reconexao | core/roll_guard.lua | test_roll_guard.lua | TESTE_LOCAL_APROVADO (logica) |
 | R01, R05, R06, R07, R08.4-R08.5, R09.3-R09.6 | NPC ambiental, IA, NUI, Qbox, journal, NUI/in-game | — | — | NAO_INICIADO |
+
+| R08.4 / R08.5 / B09 / B10 / C07 (logica) | journal, idempotencia, compensacao, recuperacao, falha segura | core/ledger.lua | tests/test_ledger.lua (queda em cada operacao, corrupcao, IO) | TESTE_LOCAL_APROVADO (portas fake; store duravel e Qbox/ox_inventory reais NAO_INICIADO) |
