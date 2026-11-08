@@ -94,6 +94,12 @@ return {
         fightBase = 0.5,
         moodDeltaAccept = 8, moodDeltaCounter = -3, moodDeltaRefuse = -10,
         moodDeltaGoodOffer = 4, moodDeltaBadOffer = -6,
+        -- efeito de mensagens livres (so humor/paciencia; nunca preco/aceite)
+        intentMood = {
+            polite = { mood = 3 }, premium = { mood = 2 }, provoke = { mood = -10, patience = -0.1 },
+            threat = { mood = -18, patience = -0.2 }, discount = { mood = -1, patience = -0.04, insist = 1 },
+            bye = { mood = 0 }, chat = { mood = 0 },
+        },
     },
 
     -- Controle de repeticao / abuso (R04.4, R08.3). Chave = identificador PERSISTENTE (nao o source).
@@ -103,4 +109,73 @@ return {
         approachTtlSec = 300,     -- abordagem sem conclusao expira (sem vazamento de memoria)
         maxEntries = 5000,        -- teto de memoria
     },
+
+    -- Mercadorias (R03.7). mode='package': consome `item` (1 por pacote). mode='units': consome
+    -- unitsPerPackage x `unitItem` por pacote. NUNCA os dois ao mesmo tempo.
+    goods = {
+        { key = 'pacote_rua', label = 'Pacote StreetDeals', mode = 'package', item = 'streetdeal_pacote',
+          unitItem = 'streetdeal_unidade', priceMult = 1.0 },
+    },
+    -- Destino do pagamento (R: configuravel). kind: 'cash' | 'bank' (qbx_core Player.Functions.AddMoney)
+    -- ou 'item' (ex.: item de dinheiro sujo do servidor, via ox_inventory:AddItem).
+    payment = { kind = 'cash', moneyItem = 'black_money', reason = 'mads_streetdeals' },
+
+    police = { jobType = 'leo' }, -- confirmar o `type` do job policial na instalacao (qbx_core shared/jobs.lua)
+
+    -- Validacao de entidade/jogador no servidor (R08.1).
+    validation = {
+        maxApproachDistance = 4.0,  -- jogador <-> ped (quando o ped e entidade de rede)
+        maxMoveFromStart = 12.0,    -- jogador nao pode se afastar mais que isso durante a sessao
+        allowUnverifiedLocalPeds = true, -- ped local (sem netId valido): modo degradado (ver IA_E_SEGURANCA.md)
+        populationTypes = nil,      -- ex.: { 1, 2, 3, 4 } so apos homologar GetEntityPopulationType in-game
+        blockedModels = {},         -- nomes de modelo (ex.: policiais/seguranca) nunca elegiveis
+    },
+
+    session = {
+        ttlSec = 180, dealTtlSec = 45, maxTurns = 24, minActionIntervalMs = 250, maxTextChars = 200,
+        maxPerPlayerBurst = 6, -- acoes por janela de 5 s
+        fightSeconds = 25, chaseChance = 0.35,
+    },
+
+    interaction = { mode = 'both', targetDistance = 2.5, key = 'G', keyDistance = 2.5, -- target|key|both
+        allowedPedTypes = { 4, 5 } }, -- GetPedType: 4 CIVMALE, 5 CIVFEMALE (exclui policia, gangues, animais)
+
+    dispatch = {
+        -- mode: 'none' | 'export' | 'event' | 'command'. Preencha conforme o dispatch REAL instalado.
+        mode = 'none', resource = '', export = '', event = '', command = '',
+        code = '10-66', message = 'Tentativa suspeita de venda de entorpecentes', cooldownSec = 60,
+    },
+
+    ai = {
+        enabled = true,             -- so efetiva se houver chave/endpoint; senao usa fallback local
+        provider = 'anthropic',     -- 'anthropic' | 'openai' (compativel chat completions)
+        endpoint = '',              -- vazio = padrao do provedor
+        model = 'claude-haiku-5-5',
+        timeoutMs = 6000, maxOutputTokens = 160, maxInputChars = 400, maxReplyChars = 260,
+        perPlayerPerMin = 8, globalPerMin = 60, dailyRequests = 5000,
+        breakerFailures = 4, breakerCooldownSec = 60,
+        phraseOffers = true,        -- usar IA tambem para frasear respostas a ofertas (consome mais)
+    },
+
+    anim = {
+        hello = { 'gestures@m@standing@casual', 'gesture_hello' },
+        refuse = { 'gestures@m@standing@casual', 'gesture_no_way' },
+        trade = { 'mp_common', 'givetake1_a' },
+        tradeNpc = { 'mp_common', 'givetake1_b' },
+    },
+
+    -- Areas (R02.5): primeira correspondencia mais proxima define a zona. COORDENADAS DE EXEMPLO
+    -- aproximadas: ajuste ao seu mapa. zones validas: busy|residential|isolated|police_risk|near_station.
+    areas = {
+        { zone = 'near_station', x = 425.1, y = -979.5, z = 30.7, r = 120.0 },   -- Mission Row
+        { zone = 'near_station', x = -1108.0, y = -847.0, z = 19.3, r = 100.0 }, -- Vespucci
+        { zone = 'near_station', x = 362.0, y = -1564.0, z = 29.3, r = 100.0 },  -- Davis
+        { zone = 'near_station', x = 1855.0, y = 3683.0, z = 34.3, r = 100.0 },  -- Sandy Shores
+        { zone = 'near_station', x = -447.0, y = 6012.0, z = 31.7, r = 100.0 },  -- Paleto
+        { zone = 'busy', x = 195.0, y = -934.0, z = 30.7, r = 150.0 },           -- Legion Square
+        { zone = 'busy', x = -1850.0, y = -1230.0, z = 13.0, r = 150.0 },        -- Del Perro Pier
+        { zone = 'residential', x = 100.0, y = -1900.0, z = 21.0, r = 250.0 },   -- Davis/Strawberry
+        { zone = 'isolated', x = 2500.0, y = 4800.0, z = 35.0, r = 600.0 },      -- Grapeseed (rural)
+    },
+    pedNames = {}, -- opcional: nomes de modelo extras que o servidor deve reconhecer (alem de modelArchetypeHints)
 }

@@ -10,11 +10,15 @@ Construir **do zero** um resource FiveM chamado `mads_streetdeals`, com todas as
 
 1. Verificar documentacao atual e, sempre que disponivel, os arquivos reais de Qbox, OneSync, ox_lib, ox_inventory, ox_target, dispatch e sistema financeiro da instalacao-alvo. Nao inventar exports, eventos, APIs ou assinaturas.
 2. Elaborar arquitetura modular curta e em seguida produzir **arquivos Lua, NUI, configuracoes, testes e documentacao reais**.
-3. Trabalhar em fases pequenas com artefatos e resultados verificaveis; avancar automaticamente nas fases normais, sem solicitar confirmacao a cada etapa.
+3. Trabalhar em **grandes blocos integrados** com resultados verificaveis; avancar automaticamente ate produzir os artefatos de entrega, **sem pedir confirmacao entre modulos** (perguntas como "quer que eu continue?" sao proibidas). Interromper somente por impedimento real que exija acao do usuario.
 4. Apos cada fase registrar o estado em `ESTADO_DESENVOLVIMENTO.md` e atualizar matriz de requisitos/testes (arquivos a criar). Associar requisito -> implementacao -> teste -> evidencia.
-5. Criar commits pequenos e explicativos; nao apagar codigo funcional para recomecar sem justificativa. Jamais sobrescrever trabalho existente silenciosamente.
+5. Preferir **poucos commits grandes e substanciais** (por bloco integrado, ou um unico commit do resource completo), nunca um commit por modulo pequeno nem commits isolados so para ajustar instrucoes; nao apagar codigo funcional para recomecar sem justificativa. Jamais sobrescrever trabalho existente silenciosamente.
 6. Quando houver duas tentativas iguais sem progresso, parar, identificar causa e mudar estrategia. Nao alegar execucao em background.
 7. Quando nao houver ferramenta/servidor/chave de API disponivel, entregar o que de fato foi desenvolvido, registrar precisamente o bloqueio e a proxima acao. **Nao inventar resultado de teste.**
+
+## Prioridade de entrega (preferencia atual do usuario)
+
+Meta: entregar o resource completo e instalavel (`MADS_StreetDeals_Qbox.zip`) e o projeto completo (`MADS_StreetDeals_Projeto_Completo.zip`). Implementar e testar antes de produzir relatorios extensos; nao repetir pesquisas/testes ja aprovados sem mudanca relevante; usar a skill `mads-checkpoint` so para preservar continuidade, nunca como ponto de parada. Entregar o ZIP **nao** e homologacao: a V1 so e aprovada com os 56 checks comprovados.
 
 ## Fronteiras tecnicas
 

@@ -31,8 +31,10 @@ local function validate(self, tx)
     if not q or q < 1 or q > self.maxPackages then return nil, 'bad_quantity' end
     if not u or u < 1 or u > self.maxUnitPrice then return nil, 'bad_unit_price' end
     if t ~= u * q then return nil, 'total_mismatch' end -- defesa em profundidade
-    return { key = tx.key, identifier = tx.identifier, item = tx.item, qty = q, unitPrice = u, total = t,
-        payKind = tx.payKind, kind = tx.kind }
+    local ic = tx.itemCount == nil and q or math.tointeger(tx.itemCount)
+    if not ic or ic < 1 or ic > 1000 then return nil, 'bad_item_count' end
+    return { key = tx.key, identifier = tx.identifier, item = tx.item, itemCount = ic, qty = q, unitPrice = u,
+        total = t, payKind = tx.payKind, kind = tx.kind, src = tx.src }
 end
 
 function M:_append(key, state, data, note)

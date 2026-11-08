@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MADS StreetDeals</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app" class="app hidden" role="dialog" aria-modal="true" aria-labelledby="buyerName">
+    <header class="top">
+      <div class="buyer">
+        <div class="avatar" aria-hidden="true">?</div>
+        <div>
+          <h1 id="buyerName">Comprador</h1>
+          <div class="meta"><span id="moodBadge" class="badge">neutro</span><span id="modeBadge" class="badge ghost"></span><span id="aiBadge" class="badge ghost" title="Origem das falas">local</span></div>
+        </div>
+      </div>
+      <div class="ttl" title="Tempo restante da conversa"><span id="ttl">--</span></div>
+      <button id="btnClose" class="btn ghost" aria-label="Cancelar negociação (Esc)">✕ Cancelar</button>
+    </header>
+
+    <div id="error" class="error hidden" role="alert"><span id="errorText"></span><button id="errorX" class="x" aria-label="Fechar aviso">×</button></div>
+
+    <section class="grid">
+      <div class="chat-col">
+        <div id="chat" class="chat" role="log" aria-live="polite" aria-label="Conversa"></div>
+        <div id="typing" class="typing hidden">O comprador está pensando…</div>
+        <form id="chatForm" class="composer" autocomplete="off">
+          <input id="chatInput" type="text" maxlength="200" placeholder="Fale com o comprador… (Enter envia)" aria-label="Mensagem">
+          <button id="btnSend" class="btn primary" type="submit">Enviar</button>
+        </form>
+      </div>
+
+      <aside id="panel" class="panel">
+        <div id="priceCard" class="card price" tabindex="0" aria-label="Preço por pacote. Role o mouse ou use as setas para ajustar.">
+          <div class="label">Preço por pacote</div>
+          <div class="price-row">
+            <button id="btnMinus" class="btn round" aria-label="Diminuir preço">−</button>
+            <div id="unitPrice" class="big">$0</div>
+            <button id="btnPlus" class="btn round" aria-label="Aumentar preço">+</button>
+          </div>
+          <div id="pct" class="pct">referência</div>
+          <div id="hint" class="hint">Role o mouse para ajustar a oferta</div>
+          <div class="ref">Referência: <span id="refPrice">$0</span></div>
+        </div>
+
+        <div id="goodsCard" class="card hidden">
+          <label for="goodsSel" class="label">Mercadoria</label>
+          <select id="goodsSel"></select>
+        </div>
+
+        <div id="qtyCard" class="card">
+          <div class="label">Quantidade (pacotes)</div>
+          <div class="qty-row">
+            <button id="qMinus" class="btn round" aria-label="Menos um pacote">−</button>
+            <div id="qty" class="qty">1</div>
+            <button id="qPlus" class="btn round" aria-label="Mais um pacote">+</button>
+          </div>
+          <div class="stock">Estoque: <span id="stock">0</span> · Máx.: <span id="maxQty">1</span></div>
+        </div>
+
+        <div class="card total">
+          <div class="label">Total estimado</div>
+          <div id="total" class="big">$0</div>
+          <div class="hint small">O servidor confirma o valor final.</div>
+        </div>
+
+        <div id="counterBox" class="card counter hidden">
+          <div class="label">Contraproposta</div>
+          <div id="counterText" class="big small"></div>
+          <button id="btnCounter" class="btn warn">Aceitar contraproposta</button>
+        </div>
+
+        <div id="dealBox" class="card deal hidden">
+          <div class="label" id="dealLabel">Acordo fechado</div>
+          <div id="dealText" class="big small"></div>
+          <button id="btnConfirm" class="btn success">Confirmar entrega</button>
+        </div>
+
+        <button id="btnOffer" class="btn primary wide">Fazer oferta</button>
+      </aside>
+    </section>
+
+    <div id="loading" class="loading hidden" aria-hidden="true"><span class="spinner"></span></div>
+    <div id="result" class="result hidden" role="status"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

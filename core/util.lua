@@ -30,4 +30,16 @@ function M.shallow_copy(t)
     return c
 end
 
+-- Mescla `over` sobre `base` (tabelas aninhadas); listas sao substituidas por inteiro.
+function M.deep_merge(base, over)
+    for k, v in pairs(over) do
+        if type(v) == 'table' and type(base[k]) == 'table' and #v == 0 and next(v) ~= nil then
+            M.deep_merge(base[k], v)
+        else
+            base[k] = v
+        end
+    end
+    return base
+end
+
 return M

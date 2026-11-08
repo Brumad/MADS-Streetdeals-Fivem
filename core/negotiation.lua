@@ -106,4 +106,16 @@ function M.evaluate(cfg, npc, offer, zoneKey, rng)
     return 'hesitate', state, info
 end
 
+-- Efeito de uma mensagem livre do jogador (intencao ja classificada e validada contra whitelist).
+-- Nao altera preco nem aceite diretamente: so humor/paciencia/insistencia (R02.4, R05.7).
+function M.apply_intent(cfg, npc, intent)
+    local d = (cfg.negotiation.intentMood or {})[intent]
+    if not d then return npc end
+    local c = util.shallow_copy(npc)
+    c.mood = clamp(npc.mood + d.mood, 0, 100)
+    c.patience = clamp(npc.patience + (d.patience or 0), 0, 1)
+    if d.insist then c.insistence = npc.insistence + d.insist end
+    return c
+end
+
 return M

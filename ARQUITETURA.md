@@ -4,15 +4,23 @@ Principio: **nucleo puro e testavel** (`core/`, sem natives, sem Qbox) + **camad
 (`server/`, `client/`, `nui/`) que so traduzem para Qbox/ox_*/natives. Servidor e autoritativo.
 
 ```
-config/config.lua      defaults editaveis (sem segredos)
-core/rng.lua           RNG injetavel (system | seeded | scripted)
-core/util.lua          clamp, range, weighted_pick, shallow_copy
-core/economy.lua       tabela policial interpolada, preco/pacote, scroll->preco, combo, premio raro
-core/profiles.lua      NPC individual: arquetipo + atributos sorteados por faixa
-core/negotiation.lua   decisao por proposta (aceite/contra/hesita/denuncia/briga) + humor/paciencia
-core/probability.lua   resultados na abordagem; Plus rara 1/1000 (1 sorteio inteiro)
-core/roll_guard.lua    1 oportunidade por abordagem; cooldown por identificador persistente
-tests/                 framework proprio + suites; tools/run_lua_tests.py (Lua 5.4 via lupa)
+config/config.lua        defaults editaveis (sem segredos); config/local.lua opcional (ignorado pelo git)
+core/                    NUCLEO PURO (sem natives) - testado localmente
+  rng util json          RNG injetavel, utilitarios, JSON estrito
+  economy                tabela policial interpolada, scroll->preco, combo, premio raro
+  profiles negotiation   NPC individual; decisao por proposta; humor/paciencia/intencao
+  probability roll_guard resultados da abordagem; Plus rara 1/1000; 1 oportunidade por abordagem
+  session                1 sessao/jogador, 1 jogador/NPC, expiracao, seq anti-replay, ritmo
+  ledger                 journal duravel, idempotencia, compensacao, recuperacao (portas injetadas)
+  dialogue ai            fallback local + classificador de intencao; cliente de IA com contrato/limites
+server/engine.lua        orquestrador autoritativo (env injetado) - testado com dublês
+server/main.lua          cola FiveM: callbacks ox_lib, threads, comandos admin
+server/qbox.lua          UNICA camada Qbox/ox_inventory (player, ped, policiais, estoque, portas)
+server/dispatch.lua      adaptador de dispatch (none|export|event)
+server/journal_store.lua store duravel em oxmysql
+client/main.lua          ox_target + tecla, abordagem, NUI, animacoes, briga, limpeza
+nui/                     HTML/CSS/JS responsivo (scroll, chat, loading, erros, cancelamento)
+tests/ tools/            suites Lua (133), NUI Chromium (25), empacotamento
 ```
 
 ## Decisoes
@@ -22,11 +30,6 @@ tests/                 framework proprio + suites; tools/run_lua_tests.py (Lua 5
 3. **Estado do NPC imutavel por turno** (`negotiation.evaluate` devolve copia) => facil de journalar/reproduzir.
 4. **Zonas e arquetipos em config**: adicionar perfil/zona nao exige mexer no motor (A22).
 5. **IA so linguagem** (a implementar): contrato JSON estruturado; decisao vem de `negotiation`.
-
-## Planejado (ainda NAO implementado)
-`server/session.lua` (sessao + trava de NPC), `server/ledger.lua` (journal duravel/idempotencia/compensacao),
-`server/qbox.lua` (unica camada que chama qbx_core/ox_inventory/dispatch), `server/ai.lua` + fallback local,
-`client/` (descoberta de peds, target, animacoes, briga), `nui/`, `fxmanifest.lua`, SQL/itens.
 
 ## Limites honestos
 Nao ha atomicidade entre ox_inventory e qbx_core: o ledger usara intencao -> remocao -> pagamento ->

@@ -4,7 +4,7 @@ local T = require 'tests.framework'
 
 local suites = {
     'tests.test_economy', 'tests.test_probability', 'tests.test_negotiation',
-    'tests.test_profiles', 'tests.test_roll_guard', 'tests.test_ledger',
+    'tests.test_profiles', 'tests.test_roll_guard', 'tests.test_ledger', 'tests.test_engine', 'tests.test_ai', 'tests.test_misc',
 }
 for _, s in ipairs(suites) do require(s) end
 

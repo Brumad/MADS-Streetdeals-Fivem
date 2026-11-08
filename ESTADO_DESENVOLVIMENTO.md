@@ -1,32 +1,32 @@
 # Estado do desenvolvimento — MADS StreetDeals
 
-Contrato: [REQUISITOS.md](REQUISITOS.md) · Gate: [CRITERIOS_DE_APROVACAO.md](CRITERIOS_DE_APROVACAO.md) · Matriz: [MATRIZ_TESTES.md](MATRIZ_TESTES.md)
-Branch: `claude/keen-brown-5dpabc`. V1 NAO concluida (nenhum dos 56 checks esta HOMOLOGADO).
+Contrato: [REQUISITOS.md](REQUISITOS.md) · Gate: [CRITERIOS_DE_APROVACAO.md](CRITERIOS_DE_APROVACAO.md) · Matriz (56 checks): [MATRIZ_TESTES.md](MATRIZ_TESTES.md)
+Branch: `claude/keen-brown-5dpabc`. **V1 NAO aprovada**: nenhum check esta INTEGRACAO_VERIFICADA/HOMOLOGADO.
 
-## (a) Modulo atual
-Fundacoes do nucleo puro (economia, probabilidade, perfis, negociacao) e integridade financeira (ledger).
+## (a) Objetivo atual
+Resource completo em codigo (todos os sistemas implementados) e empacotado; falta homologacao externa (FXServer/Qbox/FiveM/IA real).
 
 ## (b) Concluido (implementado)
-- `config/config.lua`, `core/{rng,util,economy,profiles,negotiation,probability,roll_guard,ledger}.lua`
-- `tests/` (framework, fakes, 6 suites), `tools/run_lua_tests.py`
-- Docs: `ARQUITETURA.md`, `REFERENCIAS_TECNICAS.md`, `MATRIZ_TESTES.md`
+Nucleo `core/*`, `server/{engine,main,qbox,dispatch,journal_store}.lua`, `client/main.lua`, `nui/*`, `fxmanifest.lua`,
+`sql/`, `install/`, `config/config.lua`, `tools/package.py`, docs (INSTALACAO, CONFIGURACAO, IA_E_SEGURANCA, INTEGRACAO_QBOX,
+HOMOLOGACAO_FXSERVER, ARQUITETURA, REFERENCIAS_TECNICAS, MATRIZ_TESTES).
 
-## (c) Testes e evidencias
-- `python3 tools/run_lua_tests.py` -> 72 passou, 0 falhou (Lua 5.4 via lupa, container Linux, 2026-11-08). Teste LOCAL, sem Qbox/FiveM.
-- Mutacoes de sanidade: 6/6 no core e 4/4 no ledger detectadas.
-- Ledger: varredura de queda em cada operacao (3 cenarios), idempotencia, corrupcao, falha de IO.
-- Nao commitado ainda: `core/ledger.lua`, `tests/fakes.lua`, `tests/test_ledger.lua`, edicao em `tests/run_all.lua`.
+## (c) Testes e evidencias (locais; container Linux, 2026-11-08)
+- `python3 tools/run_lua_tests.py`: **133 passou, 0 falhou** (Lua 5.4 via lupa). Inclui 1M de sorteios do raro, varredura de queda em cada operacao do ledger, engine ponta a ponta com dublês, IA com HTTP fake (malformado/timeout/injecao/limites/breaker).
+- `node tests/nui/run.js`: **25 passou, 0 falhou** (Chromium/Playwright): scroll, teclado, chat, loading, falha, timeout, cancelar, duplo clique, 5 resolucoes.
+- Mutacoes de sanidade detectadas (core 6/6, ledger 4/4). Sintaxe Lua 5.4 de todos os .lua valida.
+- Pacotes gerados e verificados por `tools/package.py` (testzip + varredura de segredos).
 
-## (d) Pendencias / bloqueios
-- Sem FXServer/Qbox/cliente FiveM: C08–C10 BLOQUEADO. Sem chave de IA: A16/B11 real BLOQUEADO.
-- `docs.qbox.re` e `docs.fivem.net` dao 403 no proxy; verificacao so via codigo no GitHub.
-- NAO_INICIADO: sessoes/trava de NPC, camada Qbox, ox_inventory/ox_target (assinaturas nao verificadas), dispatch, IA+fallback, NUI, client (peds, animacoes, briga), store duravel de producao (oxmysql/arquivo), fxmanifest, SQL/itens, docs restantes.
+## (d) Pendencias / bloqueios (dependem do usuario/ambiente)
+FXServer+Qbox+ox_*+oxmysql (C08, B01–B06), cliente FiveM (C09, A15, A20), 2 jogadores (C10), resmon (B13, C11),
+dispatch real (A11, B05), chave/provedor de IA (A16 real), definir licenca (D05). Ver HOMOLOGACAO_FXSERVER.md.
 
 ## (e) Riscos e decisoes
-- Sem atomicidade inventario<->dinheiro: estados ambiguos vao a `needs_review`, nunca repetem acao.
-- Ped apenas local nao e validavel pelo servidor: mitigar por sessao + distancia + cooldown por identificador.
-- Defaults de pesos/zonas/arquetipos sao propostas editaveis (R04.7).
-- Tipo de job policial (`leo`?) a confirmar na instalacao.
+- Sem atomicidade inventario<->dinheiro: ambiguo -> `needs_review`, nunca repete acao.
+- Ped local (sem netId) nao e validavel: modo degradado configuravel (`allowUnverifiedLocalPeds`).
+- Nomes de animacao/modelo/`areas` (coordenadas) sao exemplos a homologar; `populationTypes` desligado ate homologar.
+- IA: formatos `anthropic`/`openai` pela documentacao publica, nao testados com chamada real.
+- `GetEntityPopulationType`, `lib.requestAnimDict`, `onSelect(data.entity)` do ox_target: usados conforme conhecimento/codigo lido, a confirmar in-game.
 
 ## (f) Proxima acao
-1. Commit do ledger. 2. Verificar assinaturas reais de ox_inventory (`RemoveItem/AddItem/GetItemCount`) e ox_target (`addGlobalPed`) em raw.githubusercontent.com e registrar em `REFERENCIAS_TECNICAS.md`. 3. Criar `core/session.lua` (trava de NPC, expiracao, estados) + `tests/test_session.lua`.
+Instalar em servidor de teste Qbox e executar HOMOLOGACAO_FXSERVER.md item a item; depois `/mads-audit` (auditoria independente).
